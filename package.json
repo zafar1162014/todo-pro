@@ -1,6 +1,6 @@
 {
 	"name": "zafar-todo-pro",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "A command-line tool for managing todos with advanced features like editing and filtering by status.",
 	"main": "index.js",
 	"scripts": {
