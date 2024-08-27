@@ -78,7 +78,7 @@ function resetTodos() {
 	}
 }
 
-class TodoPro {
+class TodosPro {
 	constructor() {
 		this.program = new Command();
 		this.initializeCLI();
@@ -182,5 +182,5 @@ class TodoPro {
 	}
 }
 
-const todopro = new TodoPro();
-export default todopro;
+const todospro = new TodosPro();
+export default todospro;

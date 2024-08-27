@@ -1,5 +1,5 @@
 {
-	"name": "todopro",
+	"name": "todospro",
 	"version": "1.2.0",
 	"description": "A command-line tool for managing todos with advanced features like editing and filtering by status.",
 	"main": "index.js",
@@ -19,7 +19,7 @@
 		"readline-sync": "^1.4.10"
 	},
 	"bin": {
-		"todopro": "index.js"
+		"todospro": "index.js"
 	},
 	"type": "module",
 	"homepage": "https://github.com/zafar1162014/todopro",
