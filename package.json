@@ -1,11 +1,8 @@
 {
-	"name": "zafar-todo-pro",
+	"name": "todopro",
 	"version": "1.0.1",
 	"description": "A command-line tool for managing todos with advanced features like editing and filtering by status.",
 	"main": "index.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
 	"keywords": [
 		"todo",
 		"cli",
@@ -13,7 +10,7 @@
 		"management",
 		"command-line"
 	],
-	"author": "Your Name",
+	"author": "Zafar",
 	"license": "MIT",
 	"dependencies": {
 		"chalk": "^5.3.0",
@@ -22,15 +19,19 @@
 		"readline-sync": "^1.4.10"
 	},
 	"bin": {
-		"todo-pro": "index.js"
+		"todopro": "index.js"
 	},
 	"type": "module",
-	"homepage": "https://github.com/zafar1162014/todo-pro",
+	"homepage": "https://github.com/zafar1162014/todopro",
 	"bugs": {
-		"url": "https://github.com/zafar1162014/todo-pro/issues"
+		"url": "https://github.com/zafar1162014/todopro/issues"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/zafar1162014/todo-pro.git"
+		"url": "https://github.com/zafar1162014/todopro.git"
+	},
+	"scripts": {
+		"test": "node index.js ls",
+		"start": "node index.js"
 	}
 }

@@ -7,7 +7,6 @@ import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
 
-const program = new Command();
 const todoFile = path.join(process.cwd(), 'todo.json');
 
 function readTodo() {
@@ -24,28 +23,28 @@ function writeTodo(todos) {
 
 // Display the available commands
 function displayHelp() {
-	console.log(chalk.green(figlet.textSync('Todo-Pro')));
+	console.log(chalk.green(figlet.textSync('TodoPro')));
 	console.log(chalk.cyan('\nAvailable Commands:'));
-	console.log(chalk.yellow('  todo-pro add <task>     ') + 'Add a new todo');
+	console.log(chalk.yellow('  todopro add <task>     ') + 'Add a new todo');
 	console.log(
-		chalk.yellow('  todo-pro rm <task>      ') + 'Delete a todo by task'
+		chalk.yellow('  todopro rm <task>      ') + 'Delete a todo by task'
 	);
 	console.log(
-		chalk.yellow('  todo-pro done <task>    ') + 'Mark a todo as done by task'
+		chalk.yellow('  todopro done <task>    ') + 'Mark a todo as done by task'
 	);
-	console.log(chalk.yellow('  todo-pro edit <id>      ') + 'Edit a todo by ID');
-	console.log(chalk.yellow('  todo-pro ls             ') + 'List all todos');
+	console.log(chalk.yellow('  todopro edit <id>      ') + 'Edit a todo by ID');
+	console.log(chalk.yellow('  todopro ls             ') + 'List all todos');
 	console.log(
-		chalk.yellow('  todo-pro ls p           ') + 'List all pending todos'
-	);
-	console.log(
-		chalk.yellow('  todo-pro ls d           ') + 'List all done todos'
+		chalk.yellow('  todopro ls p           ') + 'List all pending todos'
 	);
 	console.log(
-		chalk.yellow('  todo-pro reset          ') + 'Reset (clear) all todos'
+		chalk.yellow('  todopro ls d           ') + 'List all done todos'
 	);
 	console.log(
-		chalk.yellow('  todo-pro h              ') + 'Display this help menu'
+		chalk.yellow('  todopro reset          ') + 'Reset (clear) all todos'
+	);
+	console.log(
+		chalk.yellow('  todopro h              ') + 'Display this help menu'
 	);
 }
 
@@ -79,95 +78,109 @@ function resetTodos() {
 	}
 }
 
-program.name('todo-pro').description('Todo-Pro CLI').version('2.0.0');
+class TodoPro {
+	constructor() {
+		this.program = new Command();
+		this.initializeCLI();
+	}
 
-program
-	.command('add <task>')
-	.description('Add a new todo')
-	.action((task) => {
-		const todos = readTodo();
-		const newTodo = {
-			id: String(todos.length + 1),
-			task,
-			done: false,
-		};
-		todos.push(newTodo);
-		writeTodo(todos);
-		console.log(chalk.green(`Added new todo: "${task}"`));
-	});
+	initializeCLI() {
+		this.program.name('todopro').description('TodoPro CLI').version('2.0.0');
 
-program
-	.command('rm <task>')
-	.description('Delete a todo by task')
-	.action((task) => {
-		let todos = readTodo();
-		const index = todos.findIndex(
-			(todo) => todo.task.toLowerCase().trim() === task.toLowerCase().trim()
-		);
-		if (index !== -1) {
-			todos.splice(index, 1);
-			writeTodo(todos);
-			console.log(chalk.red(`Deleted todo: "${task}"`));
-		} else {
-			console.log(chalk.red(`Todo: "${task}" not found`));
-		}
-	});
-
-program
-	.command('done <task>')
-	.description('Mark a todo as done by task')
-	.action((task) => {
-		const todos = readTodo();
-		const todo = todos.find(
-			(todo) => todo.task.toLowerCase().trim() === task.toLowerCase().trim()
-		);
-		if (todo) {
-			todo.done = true;
-			writeTodo(todos);
-			console.log(chalk.yellow(`Marked todo: "${task}" as done`));
-		} else {
-			console.log(chalk.red(`Todo: "${task}" not found`));
-		}
-	});
-
-program
-	.command('edit <id>')
-	.description('Edit a todo by ID')
-	.action((id) => {
-		const todos = readTodo();
-		const todo = todos.find((todo) => todo.id === id);
-		if (todo) {
-			console.log(chalk.blue(`Current task: ${todo.task}`));
-			const newTask = readlineSync.question('Enter new task description: ');
-			if (newTask.trim()) {
-				todo.task = newTask.trim();
+		this.program
+			.command('add <task>')
+			.description('Add a new todo')
+			.action((task) => {
+				const todos = readTodo();
+				const newTodo = {
+					id: String(todos.length + 1),
+					task,
+					done: false,
+				};
+				todos.push(newTodo);
 				writeTodo(todos);
-				console.log(chalk.green(`Todo ID ${id} has been updated.`));
-			} else {
-				console.log(chalk.red('No changes made.'));
-			}
-		} else {
-			console.log(chalk.red(`Todo with ID ${id} not found.`));
-		}
-	});
+				console.log(chalk.green(`Added new todo: "${task}"`));
+			});
 
-program
-	.command('ls [status]')
-	.description('List todos based on status (p: pending, d: done)')
-	.action((status) => listTodos(status));
+		this.program
+			.command('rm <task>')
+			.description('Delete a todo by task')
+			.action((task) => {
+				let todos = readTodo();
+				const index = todos.findIndex(
+					(todo) => todo.task.toLowerCase().trim() === task.toLowerCase().trim()
+				);
+				if (index !== -1) {
+					todos.splice(index, 1);
+					// Update IDs after deletion
+					todos = todos.map((todo, idx) => ({ ...todo, id: String(idx + 1) }));
+					writeTodo(todos);
+					console.log(chalk.red(`Deleted todo: "${task}"`));
+				} else {
+					console.log(chalk.red(`Todo: "${task}" not found`));
+				}
+			});
 
-program
-	.command('reset')
-	.description('Reset (clear) all todos')
-	.action(() => resetTodos());
+		this.program
+			.command('done <task>')
+			.description('Mark a todo as done by task')
+			.action((task) => {
+				const todos = readTodo();
+				const todo = todos.find(
+					(todo) => todo.task.toLowerCase().trim() === task.toLowerCase().trim()
+				);
+				if (todo) {
+					todo.done = true;
+					writeTodo(todos);
+					console.log(chalk.yellow(`Marked todo: "${task}" as done`));
+				} else {
+					console.log(chalk.red(`Todo: "${task}" not found`));
+				}
+			});
 
-program.command('h').description('Display help').action(displayHelp);
+		this.program
+			.command('edit <id>')
+			.description('Edit a todo by ID')
+			.action((id) => {
+				const todos = readTodo();
+				const todo = todos.find((todo) => todo.id === id);
+				if (todo) {
+					console.log(chalk.blue(`Current task: ${todo.task}`));
+					const newTask = readlineSync.question('Enter new task description: ');
+					if (newTask.trim()) {
+						todo.task = newTask.trim();
+						writeTodo(todos);
+						console.log(chalk.green(`Todo ID ${id} has been updated.`));
+					} else {
+						console.log(chalk.red('No changes made.'));
+					}
+				} else {
+					console.log(chalk.red(`Todo with ID ${id} not found.`));
+				}
+			});
 
-// Handle invalid commands
-program.on('command:*', () => {
-	console.error(chalk.red('Invalid command!'));
-	displayHelp();
-	process.exit(1);
-});
+		this.program
+			.command('ls [status]')
+			.description('List todos based on status (p: pending, d: done)')
+			.action((status) => listTodos(status));
 
-program.parse(process.argv);
+		this.program
+			.command('reset')
+			.description('Reset (clear) all todos')
+			.action(() => resetTodos());
+
+		this.program.command('h').description('Display help').action(displayHelp);
+
+		// Handle invalid commands
+		this.program.on('command:*', () => {
+			console.error(chalk.red('Invalid command!'));
+			displayHelp();
+			process.exit(1);
+		});
+
+		this.program.parse(process.argv);
+	}
+}
+
+const todopro = new TodoPro();
+export default todopro;
